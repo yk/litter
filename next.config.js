@@ -1,4 +1,22 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  webpack: (config, options) => {
+    config.plugins.push(
+      new options.webpack.IgnorePlugin({
+        resourceRegExp: /canvas/,
+      })
+    );
 
-module.exports = nextConfig
+    return config;
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.s3.amazonaws.com",
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;

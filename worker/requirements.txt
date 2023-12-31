@@ -1,0 +1,7 @@
+openai
+aiohttp
+loguru
+python-dotenv
+Pillow
+redis
+boto3
