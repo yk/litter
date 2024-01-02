@@ -92,7 +92,7 @@ class OpenAIClient:
 
     async def create_img(self, caption: str, upload_to_key: str | None = None) -> str:
         response = await self.api_client.images.generate(
-            model="dall-e-2",
+            model="dall-e-3",
             size="1024x1024",
             quality="standard",
             n=1,
