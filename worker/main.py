@@ -139,6 +139,17 @@ class KVClient:
         logger.debug(f"Created at {created_at}")
 
         if self.modify:
+            if img_url := post.get("img_url"):
+                logger.debug(f"Image url: {img_url}")
+                caption = await self.openai_client.get_img_caption(img_url)
+                await self.openai_client.delete_img_fn(img_url)
+                logger.debug(f"Caption: {caption}")
+                new_img_key = f"processed/{uuid.uuid4()}.jpg"
+                new_img_url = await self.openai_client.create_img(
+                    caption, upload_to_key=new_img_key
+                )
+                logger.debug(f"New image url: {len(new_img_url)}")
+                await self.redis_client.hset(key, "img_url", new_img_url)  # type: ignore
             if text := post.get("text"):
                 logger.debug(f"Text: {text}")
                 prompt = f"""
@@ -156,18 +167,6 @@ Do not use text.
                 new_text = await self.openai_client.guess_message(caption)
                 logger.debug(f"New text: {new_text}")
                 await self.redis_client.hset(key, "text", new_text)  # type: ignore
-            if img_url := post.get("img_url"):
-                logger.debug(f"Image url: {img_url}")
-                caption = await self.openai_client.get_img_caption(img_url)
-                await self.openai_client.delete_img_fn(img_url)
-                logger.debug(f"Caption: {caption}")
-                new_img_key = f"processed/{uuid.uuid4()}.jpg"
-                new_img_url = await self.openai_client.create_img(
-                    caption, upload_to_key=new_img_key
-                )
-                logger.debug(f"New image url: {len(new_img_url)}")
-                await self.redis_client.hset(key, "img_url", new_img_url)  # type: ignore
-
         await self.redis_client.zadd("posts", {key: -created_at})
 
     async def get_all_pending_keys(self) -> list[str]:
