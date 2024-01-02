@@ -7,8 +7,10 @@ import { dataUriToBuffer } from "data-uri-to-buffer";
 import { Image } from "image-js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
-export const getPosts = async ({ offset = 0, limit = 10 }) => {
-  // const postIds = await kv.zrange("posts", offset, limit);
+export const getPosts = async ({ offset = 0, limit = 0 }) => {
+  if(!limit) {
+    limit = parseInt(process.env.POSTS_PER_PAGE || "10");
+  }
   const client = await getRedisClient();
   const postIds = await client.zRange("posts", offset, limit);
   const posts = await Promise.all(
