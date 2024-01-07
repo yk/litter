@@ -1,8 +1,13 @@
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import clsx from "clsx";
 
-export function PostBox({ children }) {
-  return <div className="px-16 py-8 border-b border-gray-500">{children}</div>;
+export function PostBox({ children, className }) {
+  return (
+    <div className={clsx("px-16 py-8 border-b border-gray-500", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function PostDisplay({ text, img_url, createdAt, username, children }) {
@@ -10,9 +15,7 @@ export function PostDisplay({ text, img_url, createdAt, username, children }) {
     <article className="flex flex-col">
       <div className="flex flex-row gap-4">
         <span className="text-gray-500">{`@${username}`}</span>
-        <span className="text-gray-500">
-        {createdAt}
-        </span>
+        <span className="text-gray-500">{createdAt}</span>
       </div>
       <div>
         {text && <p className="mt-2 mb-2 text-lg">{text}</p>}
