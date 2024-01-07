@@ -210,7 +210,17 @@ def get_env(name: str) -> str:
     return value
 
 
-if __name__ == "__main__":
+def create_redis_client(config) -> redis.Redis:
+    redis_client = redis.Redis(
+        host=config["REDIS_HOST"],
+        port=int(config["REDIS_PORT"]),
+        password=config["REDIS_PASSWORD"],
+        decode_responses=True,
+    )
+    return redis_client
+
+
+def create_config() -> dict[str, str]:
     config = {
         **os.environ,
         **dotenv.dotenv_values("../.env"),
@@ -220,6 +230,10 @@ if __name__ == "__main__":
         **dotenv.dotenv_values(".env.local"),
         **dotenv.dotenv_values(".env.development.local"),
     }
+    return config
+
+if __name__ == "__main__":
+    config = create_config()
 
     s3_client = boto3.client(
         "s3",
@@ -257,12 +271,7 @@ if __name__ == "__main__":
         debug_store_img=(config.get("DEBUG_STORE_IMG") in ["1", "true", "True"]),
     )
 
-    redis_client = redis.Redis(
-        host=config["REDIS_HOST"],
-        port=int(config["REDIS_PORT"]),
-        password=config["REDIS_PASSWORD"],
-        decode_responses=True,
-    )
+    redis_client = create_redis_client(config)
 
     kv_client = KVClient(
         redis_client=redis_client,

@@ -7,7 +7,23 @@ const nextConfig = {
       })
     );
 
+    // add jsonlines loader
+    config.module.rules.push({
+      test: /\.jsonl$/,
+      loader: "jsonlines-loader",
+      type: "javascript/auto",
+    });
+
     return config;
+  },
+  redirects: async () => {
+    return [
+      {
+        source: "/",
+        destination: "/bye",
+        permanent: false,
+      },
+    ];
   },
   images: {
     remotePatterns: [

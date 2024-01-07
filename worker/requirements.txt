@@ -5,3 +5,5 @@ python-dotenv
 Pillow
 redis
 boto3
+tqdm
+aiofiles
